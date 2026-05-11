@@ -30,7 +30,7 @@ FComponent fdoc_component(FComponentType type, size_t len, const char *data);
 
 void fdoc_append(FDoc *doc, FComponent component);
 
-FDoc *fdoc_from_buffer(char *buffer, size_t len);
+FDoc *fdoc_from_buffer(const char *buffer, size_t len);
 
 size_t fdoc_to_buffer(const FDoc *doc, char *buffer, size_t len);
 
