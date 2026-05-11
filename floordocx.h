@@ -20,10 +20,13 @@ typedef struct {
 
 typedef struct {
     size_t len;
+    size_t alloc;
     FComponent *components;
 } FDoc;
 
 FDoc *fdoc_new();
+
+void fdoc_append(FDoc *doc, FComponent component);
 
 FDoc *fdoc_from_buffer(char *buffer, size_t len);
 
