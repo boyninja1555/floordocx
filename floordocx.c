@@ -32,28 +32,31 @@ void fdoc_append(FDoc *doc, const FComponent component) {
 FDoc *fdoc_from_buffer(char *buffer, size_t len) {
 }
 
-char *fdoc_to_buffer(const FDoc *doc) {
-    char *buffer = malloc(doc->len * sizeof(FComponent) + sizeof(size_t));
-    buffer[0] = (char) doc->len;
+size_t fdoc_to_buffer(const FDoc *doc, char *buffer, const size_t len) {
+    size_t bi = 0;
+    if (len < sizeof(size_t)) return 0;
 
-    int bi = 0;
-    for (int i = 0; i < doc->len; i++) {
+    memcpy(buffer + bi, &doc->len, sizeof(size_t));
+    bi += sizeof(size_t);
+    for (size_t i = 0; i < doc->len; i++) {
         FComponent component = doc->components[i];
+        if (bi + sizeof(component.type) + sizeof(component.len) + component.len > len)
+            return 0;
 
         // Component type
-        bi++;
-        memcpy(buffer + bi, &component.type, sizeof(FCTYPE_META));
+        memcpy(buffer + bi, &component.type, sizeof(component.type));
+        bi += sizeof(component.type);
 
         // Component length
-        bi++;
-        memcpy(buffer + bi, &component.len, sizeof(size_t));
+        memcpy(buffer + bi, &component.len, sizeof(component.len));
+        bi += sizeof(component.len);
 
         // Component data
-        bi++;
-        memcpy(buffer + bi, &component.data, component.len);
+        memcpy(buffer + bi, component.data, component.len);
+        bi += component.len;
     }
 
-    return buffer;
+    return bi;
 }
 
 void fdoc_free(FDoc *doc) {

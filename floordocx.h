@@ -32,7 +32,7 @@ void fdoc_append(FDoc *doc, FComponent component);
 
 FDoc *fdoc_from_buffer(char *buffer, size_t len);
 
-char *fdoc_to_buffer(const FDoc *doc);
+size_t fdoc_to_buffer(const FDoc *doc, char *buffer, size_t len);
 
 void fdoc_free(FDoc *doc);
 
