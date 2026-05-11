@@ -3,7 +3,9 @@
 #include <string.h>
 
 FDoc *fdoc_new() {
-    return malloc(sizeof(FDoc));
+    FDoc *doc = malloc(sizeof(FDoc));
+    doc->len = 0;
+    return doc;
 }
 
 FDoc *fdoc_from_buffer(char *buffer, size_t len) {
