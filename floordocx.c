@@ -10,8 +10,8 @@ FDoc *fdoc_new() {
     return doc;
 }
 
-FComponent fdoc_component(const FComponentType type, const size_t len, char *data) {
-    return (FComponent){type, len, data};
+FComponent fdoc_component(const FComponentType type, const size_t len, const char *data) {
+    return (FComponent){type, len, (char *) data};
 }
 
 void fdoc_append(FDoc *doc, const FComponent component) {
