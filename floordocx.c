@@ -40,13 +40,15 @@ size_t read_size_t(const char *buffer, size_t *bi) {
     return value;
 }
 
-FComponent read_fcomponent(const char *buffer, size_t *bi) {
-    read_size_t(buffer, bi); // FIXME: Parse component type
+FComponent read_fcomponent(const char *buffer, size_t *bi, const size_t buffer_len) {
+    const FComponentType type = read_size_t(buffer, bi);
     size_t len = read_size_t(buffer, bi);
+
+    if (*bi + len > buffer_len) return fdoc_component(FCTYPE_SKIP, 0, NULL);
     char *data = malloc(len);
-    memcpy(data, buffer + *bi, len); // FIXME: Copy from buffer at offset of `bi` and length of `len` to `data`
+    memcpy(data, buffer + *bi, len);
     *bi += len;
-    return fdoc_component(FCTYPE_SKIP, len, data); // FIXME: Parse real type instead of always SKIP component
+    return fdoc_component(type, len, data);
 }
 
 FDoc *fdoc_from_buffer(const char *buffer, const size_t len) {
@@ -56,7 +58,7 @@ FDoc *fdoc_from_buffer(const char *buffer, const size_t len) {
     const size_t components_len = read_size_t(buffer, &bi);
     for (int ci = 0; ci < components_len; ci++) {
         if (bi + sizeof(size_t) > len) break;
-        fdoc_append(doc, read_fcomponent(buffer, &bi));
+        fdoc_append(doc, read_fcomponent(buffer, &bi, len));
     }
 
     return doc;
