@@ -1,0 +1,5 @@
+cmake_minimum_required(VERSION 4.2)
+project(floordocx C)
+set(CMAKE_C_STANDARD 17)
+set(CMAKE_C_STANDARD_REQUIRED ON)
+add_library(floordocx STATIC floordocx.c)
