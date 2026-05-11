@@ -1,7 +1,9 @@
 #ifndef FLOORDOCX_H
 #define FLOORDOCX_H
 
-#include <stddef.h>
+#include <stdint.h>
+
+typedef uint32_t u32;
 
 typedef enum {
     // Optional data
@@ -14,25 +16,25 @@ typedef enum {
 
 typedef struct {
     FComponentType type;
-    size_t len;
+    u32 len;
     char *data;
 } FComponent;
 
 typedef struct {
-    size_t len;
-    size_t alloc;
+    u32 len;
+    u32 alloc;
     FComponent *components;
 } FDoc;
 
 FDoc *fdoc_new();
 
-FComponent fdoc_component(FComponentType type, size_t len, const char *data);
+FComponent fdoc_component(FComponentType type, u32 len, const char *data);
 
 void fdoc_append(FDoc *doc, FComponent component);
 
-FDoc *fdoc_from_buffer(const char *buffer, size_t len);
+FDoc *fdoc_from_buffer(const char *buffer, u32 len);
 
-size_t fdoc_to_buffer(const FDoc *doc, char *buffer, size_t len);
+u32 fdoc_to_buffer(const FDoc *doc, char *buffer, u32 len);
 
 void fdoc_free(FDoc *doc);
 

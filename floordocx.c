@@ -10,7 +10,7 @@ FDoc *fdoc_new() {
     return doc;
 }
 
-FComponent fdoc_component(const FComponentType type, const size_t len, const char *data) {
+FComponent fdoc_component(const FComponentType type, const u32 len, const char *data) {
     return (FComponent){type, len, (char *) data};
 }
 
@@ -31,18 +31,18 @@ void fdoc_append(FDoc *doc, const FComponent component) {
 
 // Section: FDoc from buffer
 
-size_t read_size_t(const char *buffer, size_t *bi) {
-    size_t value = 0;
-    for (size_t i = 0; i < sizeof(size_t); i++)
-        value |= (size_t) (unsigned char) buffer[*bi + i] << (8 * i);
+u32 read_u32(const char *buffer, u32 *bi) {
+    u32 value = 0;
+    for (u32 i = 0; i < sizeof(u32); i++)
+        value |= (u32) (unsigned char) buffer[*bi + i] << (8 * i);
 
-    *bi += sizeof(size_t);
+    *bi += sizeof(u32);
     return value;
 }
 
-FComponent read_fcomponent(const char *buffer, size_t *bi, const size_t buffer_len) {
-    const FComponentType type = read_size_t(buffer, bi);
-    size_t len = read_size_t(buffer, bi);
+FComponent read_fcomponent(const char *buffer, u32 *bi, const u32 buffer_len) {
+    const FComponentType type = read_u32(buffer, bi);
+    u32 len = read_u32(buffer, bi);
 
     if (*bi + len > buffer_len) return fdoc_component(FCTYPE_SKIP, 0, NULL);
     char *data = malloc(len);
@@ -51,13 +51,13 @@ FComponent read_fcomponent(const char *buffer, size_t *bi, const size_t buffer_l
     return fdoc_component(type, len, data);
 }
 
-FDoc *fdoc_from_buffer(const char *buffer, const size_t len) {
+FDoc *fdoc_from_buffer(const char *buffer, const u32 len) {
     FDoc *doc = fdoc_new();
-    size_t bi = 0;
-    if (len < sizeof(size_t)) return doc;
-    const size_t components_len = read_size_t(buffer, &bi);
+    u32 bi = 0;
+    if (len < sizeof(u32)) return doc;
+    const u32 components_len = read_u32(buffer, &bi);
     for (int ci = 0; ci < components_len; ci++) {
-        if (bi + sizeof(size_t) > len) break;
+        if (bi + sizeof(u32) > len) break;
         fdoc_append(doc, read_fcomponent(buffer, &bi, len));
     }
 
@@ -66,13 +66,13 @@ FDoc *fdoc_from_buffer(const char *buffer, const size_t len) {
 
 // Continue
 
-size_t fdoc_to_buffer(const FDoc *doc, char *buffer, const size_t len) {
-    size_t bi = 0;
-    if (len < sizeof(size_t)) return 0;
+u32 fdoc_to_buffer(const FDoc *doc, char *buffer, const u32 len) {
+    u32 bi = 0;
+    if (len < sizeof(u32)) return 0;
 
-    memcpy(buffer + bi, &doc->len, sizeof(size_t));
-    bi += sizeof(size_t);
-    for (size_t i = 0; i < doc->len; i++) {
+    memcpy(buffer + bi, &doc->len, sizeof(u32));
+    bi += sizeof(u32);
+    for (u32 i = 0; i < doc->len; i++) {
         FComponent component = doc->components[i];
         if (bi + sizeof(component.type) + sizeof(component.len) + component.len > len)
             return 0;
