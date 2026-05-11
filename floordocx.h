@@ -26,6 +26,8 @@ typedef struct {
 
 FDoc *fdoc_new();
 
+FComponent fdoc_component(FComponentType type, size_t len, char *data);
+
 void fdoc_append(FDoc *doc, FComponent component);
 
 FDoc *fdoc_from_buffer(char *buffer, size_t len);
